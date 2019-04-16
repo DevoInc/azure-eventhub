@@ -13,42 +13,64 @@ There are two kinds of events that will be sent from Azure to Devo: from Monitor
 ## Creating the namespace
 
 - Click on _Create a resource_ on the left side, find and select the _Event Hubs_ resource and click on _Create_ button.
+
 ![alt text](resources/step_1.png)
+
 - Fill the fields with the corresponding values. Maybe you will need to create a new _Resource group_ if you haven't.
 Click _Create_. This will take few seconds.
+
 ![alt text](resources/step_2.png)
+
 - Once the namespace is created you can access to it clicking in _All resources_ on the right side of menu and then in the name space.
+
 ![alt text](resources/step_3.png)
 
 ## Creating the Event Hubs
 
 - Click on _Monitor_ option on left side menu, then _Activity Log_ and then _Export to Event Hub_ option.
+
 ![alt text](resources/step_4.png)
+
 - Select the corresponds options with the susbcription, namespace and regions. Make sure to check _Export to an event hub_ option. 
 Then save the changes.
+
 ![alt text](resources/step_5.png)
 
 This can take several minutes. Once the event hub is created you can you it in the namespace resource associated.
+
 ![alt text](resources/step_6.png)
 
 
 ## Creating the Function App
 - Click on _Create a resource_ option on left side menu, then find and select _Function App_ option. Then click _Create_.
+
 ![alt text](resources/step_7.png)
+
 - Fill and select the fields corresponding your requirements. Make sure to select _JavaScript_ in _Runtime Stack_ option. 
 Click _Create_. This can take several seconds.
+
 ![alt text](resources/step_8.png)
+
 - Once that it was created you can check it on _All resources_ option. Select the function app and then click on _*+*_ icon in _Functions_ option.
 Choose _In-portal_ option has development enironment, and the click in _Continue_ button.
+
 ![alt text](resources/step_9.png)
+
 - Choose _More templates..._ option and then _Finish and view templates_ button.
+
 ![alt text](resources/step_10.png)
+
 - Choose the _Azure Event Hub trigger_. It could ask you for install a extension. Install it.
+
 ![alt text](resources/step_12.png)
+
 - Fill and select the field according your requirements. In _Event Hub connection_ you will need to select the namespace associated.
+
 ![alt text](resources/step_13.png)
 ![alt text](resources/step_14.png)
+
 - Once the function app was created you should show something like the following image.
+
 ![alt text](resources/step_15.png)
 
 In the right side you can see two files and can run the tests. 
