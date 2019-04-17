@@ -1,15 +1,32 @@
 # Creating a Event Hub to send events from Azure to Devo
 
-This is not an agent, but its a general guide of how to sent events from Azure. 
+This is not an agent, but it's a general guide of how to sent events from Azure. 
 
-The Azure activity and sign-in logs can be easily ingested into the Devo platform by exporting the logs to an Azure event hub, which in turn triggers a cloud function to tag and send the events to Devo. 
-See how to set up the export of Azure logs to event hub in the following articles:
-
-https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-sign-ins
-https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/monitoring-stream-activity-logs-event-hubs
+The _Azure Activity Log_ and _Azure Active Directory_ logs can be easily ingested into the Devo platform by exporting the logs to an Azure event hub, which in turn triggers a cloud function to tag and send the events to Devo. 
 
 You can follow this instructions to send events from an EventHub to Devo platform.
 There are two kinds of events that will be sent from Azure to Devo: from Monitor (Azure activities logs) and from Active Directory (Sign-In and Audit logs).
+
+The Azure Activity Log is a subscription log that provides insight into subscription-level events that have occurred in Azure.
+
+Sign-ins logs provides information about the usage of managed applications and user sign-in activities.
+
+Audit logs provides traceability through logs for all changes done by various features within Azure AD. Examples of audit logs include changes made to any resources within Azure AD like adding or removing users, apps, groups, roles and policies.
+
+
+# Tables
+
+All events from Azure are storage in _cloud.azure_ tech. 
+Then, depend on the source of the events, these are saved in custom tables.
+The events who comes from Azure Monitor (Azure Activity Log) are store in _cloud.azure.activity_ and from Azure Active Directory are store in _cloud.azure.ad_.
+
+Tag | Azure Operation Type | Description
+--- | --- | ---
+cloud.azure.ad.audit.<zone> | AuditLogs | The Azure AD audit logs provide records of system activities for compliance.
+cloud.azure.ad.signin.<zone> | SignInLogs | The user sign-ins report provides records about activities of AD users.
+cloud.azure.activity.delete.<zone> | Delete | Represents the operation type
+cloud.azure.activity.events.<zone> | Action | Represents the operation type
+cloud.azure.activity.write.<zone> | Write | Represents the operation type
 
 ## Prerequisites
 
@@ -208,5 +225,17 @@ Fill and select the corresponding values according to requirements and save your
 
 Now you should start to retrieve events from Azure Active Directory.
 
-# Tables
 
+# Links
+
+See how to set up the export of Azure logs to event hub in the following articles:
+https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/monitoring-stream-activity-logs-event-hubs
+
+Activity Log
+https://docs.microsoft.com/en-us/azure/azure-monitor/platform/activity-logs-overview
+
+Audit Log
+https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-audit-logs
+
+Sing-in logs
+[](https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-sign-ins)
