@@ -22,11 +22,11 @@ Events that come from Azure Monitor (Azure Activity Log) are store in _cloud.azu
 
 Tag | Azure Operation Type | Description
 --- | --- | ---
-cloud.azure.ad.audit.<zone> | AuditLogs | The Azure AD audit logs provide records of system activities for compliance.
-cloud.azure.ad.signin.<zone> | SignInLogs | The user sign-ins report provides records about activities of AD users.
-cloud.azure.activity.delete.<zone> | Delete | Represents the operation type
-cloud.azure.activity.events.<zone> | Action | Represents the operation type
-cloud.azure.activity.write.<zone> | Write | Represents the operation type
+cloud.azure.ad.audit.\<zone> | AuditLogs | The Azure AD audit logs provide records of system activities for compliance.
+cloud.azure.ad.signin.\<zone> | SignInLogs | The user sign-ins report provides records about activities of AD users.
+cloud.azure.activity.delete.\<zone> | Delete | Represents the operation type
+cloud.azure.activity.events.\<zone> | Action | Represents the operation type
+cloud.azure.activity.write.\<zone> | Write | Represents the operation type
 
 ## Prerequisites
 
