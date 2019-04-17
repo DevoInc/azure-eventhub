@@ -1,11 +1,11 @@
 # Creating a Event Hub to send events from Azure to Devo
 
-This is not an agent, but it's a general guide of how to sent events from Azure. 
+This is not an agent, but it is a general guide on how to sent events from Azure. 
 
 The _Azure Activity Log_ and _Azure Active Directory_ logs can be easily ingested into the Devo platform by exporting the logs to an Azure event hub, which in turn triggers a cloud function to tag and send the events to Devo. 
 
-You can follow this instructions to send events from an EventHub to Devo platform.
-There are two kinds of events that will be sent from Azure to Devo: from Monitor (Azure activities logs) and from Active Directory (Sign-In and Audit logs).
+You can follow these instructions to send events from an EventHub to the Devo platform.
+There are two types of events that could be sent from Azure to Devo: from Monitor (Azure activities logs) and from Active Directory (Sign-In and Audit logs).
 
 The Azure Activity Log is a subscription log that provides insight into subscription-level events that have occurred in Azure.
 
@@ -16,9 +16,9 @@ Audit logs provides traceability through logs for all changes done by various fe
 
 # Tables
 
-All events from Azure are storage in _cloud.azure_ tech. 
-Then, depend on the source of the events, these are saved in custom tables.
-The events who comes from Azure Monitor (Azure Activity Log) are store in _cloud.azure.activity_ and from Azure Active Directory are store in _cloud.azure.ad_.
+All Azure events Azure are storage in _cloud.azure_ tech. 
+Then, depending on the source of the events, these are saved in custom tables.
+Events that come from Azure Monitor (Azure Activity Log) are store in _cloud.azure.activity_ and Azure Active Directory are store in _cloud.azure.ad_.
 
 Tag | Azure Operation Type | Description
 --- | --- | ---
@@ -35,91 +35,97 @@ cloud.azure.activity.write.<zone> | Write | Represents the operation type
 
 # Create a EventHub
 
-Go to your Azure portal account and follow the next steps.
+Go to your Azure portal account and follow the steps below.
 
-## Creating the namespace
+### Creating the namespace
 
-- Click on _Create a resource_ on the left side, find and select the _Event Hubs_ resource and click on _Create_ button.
+Click _Create a resource_ on the left side, find and select the _Event Hubs_ resource and click on the _Create_ button.
 
 ![alt text](resources/step_1.png)
 
-- Fill the fields with the corresponding values. Maybe you will need to create a new _Resource group_ if you haven't.
-Click _Create_. This will take few seconds.
+Fill the fields with the corresponding values. You may need to create a new _Resource group_ if you have not already done so.
+Click on _Create_. This will take a few seconds.
 
 ![alt text](resources/step_2.png)
 
-- Once the namespace is created you can access to it clicking in _All resources_ on the right side of menu and then in the name space.
+Once the namespace is created, you can access it by clicking on _All resources_ on the right side of the menu and then on the namespace.
 
 ![alt text](resources/step_3.png)
 
 ## Creating the Event Hubs
 
-- Click on _Monitor_ option on left side menu, then _Activity Log_ and then _Export to Event Hub_ option.
+Click on the _Monitor_ option in the left side menu, then on _Activity Log_ and then on the _Export to Event Hub_ option.
 
 ![alt text](resources/step_4.png)
 
-- Select the corresponds options with the susbcription, namespace and regions. Make sure to check _Export to an event hub_ option. 
+Select the corresponding options with the susbcription, the namespace and the regions. Be sure to check _Export to an event hub_ option. 
 Then save the changes.
 
 ![alt text](resources/step_5.png)
 
-This can take several minutes. Once the event hub is created you can you it in the namespace resource associated.
+This may take several minutes. Once the event hub is created you can see it in the associated namespace resource.
 
 ![alt text](resources/step_6.png)
 
 
 # Creating the Function App
-- Click on _Create a resource_ option on left side menu, then find and select _Function App_ option. Then click _Create_.
+
+Click on _Create a resource_ option in left-hand menu, then search and select the _Function App_ option. 
+Then click on _Create_.
 
 ![alt text](resources/step_7.png)
 
-- Fill and select the fields corresponding your requirements. Make sure to select _JavaScript_ in _Runtime Stack_ option. 
-Click _Create_. This can take several seconds.
+Fill in and select the fields corresponding your requirements. Make sure to select _JavaScript_ in the _Runtime Stack_ option. 
+Click on _Create_. This may take several seconds.
 
 ![alt text](resources/step_8.png)
 
-- Once that it was created you can check it on _All resources_ option. Select the function app and then click on _*+*_ icon in _Functions_ option.
-Choose _In-portal_ option has development enironment, and the click in _Continue_ button.
+Once that it was created you can check it in _All resources_ option. 
+Select the function app and then click on _*+*_ icon in the _Functions_ option.
+Choose the _In-portal_ option as the development environment, and then click on the _Continue_ button.
 
 ![alt text](resources/step_9.png)
 
-- Choose _More templates..._ option and then _Finish and view templates_ button.
+Choose the _More templates..._ option and then click on the _Finish and view templates_ button.
 
 ![alt text](resources/step_10.png)
 
-- Choose the _Azure Event Hub trigger_. It could ask you for install a extension. Install it.
+Choose the _Azure Event Hub trigger_. This could ask you to install an extension. Install it.
 
 ![alt text](resources/step_12.png)
 
-- Fill and select the field according your requirements. In _Event Hub connection_ you will need to select the namespace associated.
+Fill in and select the fields according your requirements. 
+In the _Event Hub connection_ you must select the associated namespace.
 
 ![alt text](resources/step_13.png)
+
 ![alt text](resources/step_14.png)
 
-- Once the function app was created you should show something like the following image.
+Once the function app has been created, something like the following image should be displayed.
 
 ![alt text](resources/step_15.png)
 
-In the right side you can see two files and can run the tests. 
-In the bottom you can see the console and the logs generated. 
-And, in the left side you can see the function app structure.
+On the right side you can see two files and the option "Test".
+In the lower part you can see the console and the generated logs.
+And, on the left side, you can see the structure of the function app.
 
-Now, you need to send all the events to Devo. You will need to upload the credentials of Devo. 
-In your computer create a folder with the name _certs_, paste the credential in this folder and compress this folder to _zip_ format.
-Then select _upload_ option on the right side and select this zip file. 
-Upload the _package.json_ file contained in this tutorial.
+Now, you need to send the events to Devo. 
+First, you must upload the credentials of the Devo domain.
+On your computer, create a folder with the name _certs_, paste the credentials here and then compress this folder in _zip_ format.
+Then, select the _upload_ option on the right side and select the newly created zip file.
+It also uploads the _package.json_ file contained in this tutorial.
 
-The structure of your event hub should looks like the following image
+The structure of your event hub function app should look like the following image
 
 ![alt text](resources/step_16.png)
 
-Unzip _certs.zip_ file from the console. 
+Unzip the _certs.zip_ file from the console. 
 
 ````bash
 > unzip certs.zip
 ````
 
-You can delete the _zip_ file.
+Delete the _zip_ file.
 
 ````bash
 > rm certs.zip
@@ -131,9 +137,9 @@ Install the devo js SDK and all dependencies. This will generate a new folder (_
 npm install
 ```
 
-Now, you need to update _index.js_ file according to send the events to Devo from the event hub. 
+Now, you need to update the _index.js_ file to send the events to Devo from the event hub. 
 
-Copy the _index.js_ file content from this tutorial and paste it in the _index.js_ file of your event hub.
+Copy teh contents of the _index.js_ from this tutorial and paste it into the _index.js_ file of your event hub.
 
 ````javascript
 const devo = require('@devo/nodejs-sdk');
@@ -184,7 +190,7 @@ module.exports = async function (context, eventHubMessages) {
 };
 ````
 
-Another file is _function.json_. This is a config file generated when you create the function app. 
+Another important file is the _function.json_. This is a config file generated when you created the function app. 
 
 ````json
 {
@@ -202,16 +208,16 @@ Another file is _function.json_. This is a config file generated when you create
 }
 ````
 
-Check that _eventHubName_ and _eventHubName_ attributes corresponds to the values specified in _Integrate_ option of the EventHub.
+Verify that the _eventHubName_ and _eventHubName_ corresponds to the values specified in the _Integrate_ option of the EventHub.
 
 ![alt text](resources/step_17.png)
 
 
-# Sending events from Active Directory
+# Sending events from Azure Active Directory
 
 Before to start to retrieve _Audit Logs_ and _Sign-ins_ events from _Azure Active Directory_ you will need to have the permissions necessaries and In order to export Sign-in data, your organization needs Azure AD P1 or P2 license.
 
-Click on _Audit logs_ or _Sign-ins_ options in the left side menu and then click in _Export Data Settings_.
+Click on the _Audit logs_ or _Sign-ins_ option in the left side menu and then click in _Export Data Settings_.
 
 ![alt text](resources/step_18.png)
 
@@ -219,12 +225,11 @@ Turn on diagnostics option
 
 ![alt text](resources/step_19.png)
 
-Fill and select the corresponding values according to requirements and save your configuration.
+Fill in and select the corresponding values according to requirements and save your configuration.
 
 ![alt text](resources/step_20.png)
 
 Now you should start to retrieve events from Azure Active Directory.
-
 
 # Links
 
