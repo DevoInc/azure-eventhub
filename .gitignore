@@ -6,7 +6,6 @@ coverage_report/
 certs/
 environment.env
 
-.idea
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -109,4 +108,3 @@ o365/
 
 *~
 .DS_Store
-.idea/
