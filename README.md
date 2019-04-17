@@ -233,14 +233,18 @@ Now you should start to retrieve events from Azure Active Directory.
 
 # Links
 
-See how to set up the export of Azure logs to event hub in the following articles:
+See how to set up the export of Azure logs to event hub
+
 https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/monitoring-stream-activity-logs-event-hubs
 
 Activity Log
+
 https://docs.microsoft.com/en-us/azure/azure-monitor/platform/activity-logs-overview
 
 Audit Log
+
 https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-audit-logs
 
 Sing-in logs
-[](https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-sign-ins)
+
+https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-sign-ins
