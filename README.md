@@ -1,14 +1,24 @@
+# Creating a Event Hub to send events from Azure to Devo
 
-This is not a agent, but its a general guide of how to sent events from Azure. 
+This is not an agent, but its a general guide of how to sent events from Azure. 
+
+The Azure activity and sign-in logs can be easily ingested into the Devo platform by exporting the logs to an Azure event hub, which in turn triggers a cloud function to tag and send the events to Devo. 
+See how to set up the export of Azure logs to event hub in the following articles:
+
+https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-sign-ins
+https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/monitoring-stream-activity-logs-event-hubs
+
 You can follow this instructions to send events from an EventHub to Devo platform.
-There are two kinds of events that will be sent from Azure to Devo: from Monitor and from Active Directory.
+There are two kinds of events that will be sent from Azure to Devo: from Monitor (Azure activities logs) and from Active Directory (Sign-In and Audit logs).
 
 ## Prerequisites
+
 - Have a Azure account with the permissions
 - Have a Devo account
 
-
 # Create a EventHub
+
+Go to your Azure portal account and follow the next steps.
 
 ## Creating the namespace
 
@@ -41,7 +51,7 @@ This can take several minutes. Once the event hub is created you can you it in t
 ![alt text](resources/step_6.png)
 
 
-## Creating the Function App
+# Creating the Function App
 - Click on _Create a resource_ option on left side menu, then find and select _Function App_ option. Then click _Create_.
 
 ![alt text](resources/step_7.png)
@@ -156,3 +166,47 @@ module.exports = async function (context, eventHubMessages) {
     context.done();    
 };
 ````
+
+Another file is _function.json_. This is a config file generated when you create the function app. 
+
+````json
+{
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "eventHubMessages",
+      "direction": "in",
+      "eventHubName": "<eventhubname>",
+      "connection": "<connection_var_name_to_spacename>",
+      "cardinality": "many",
+      "consumerGroup": "$Default"
+    }
+  ]
+}
+````
+
+Check that _eventHubName_ and _eventHubName_ attributes corresponds to the values specified in _Integrate_ option of the EventHub.
+
+![alt text](resources/step_17.png)
+
+
+# Sending events from Active Directory
+
+Before to start to retrieve _Audit Logs_ and _Sign-ins_ events from _Azure Active Directory_ you will need to have the permissions necessaries and In order to export Sign-in data, your organization needs Azure AD P1 or P2 license.
+
+Click on _Audit logs_ or _Sign-ins_ options in the left side menu and then click in _Export Data Settings_.
+
+![alt text](resources/step_18.png)
+
+Turn on diagnostics option
+
+![alt text](resources/step_19.png)
+
+Fill and select the corresponding values according to requirements and save your configuration.
+
+![alt text](resources/step_20.png)
+
+Now you should start to retrieve events from Azure Active Directory.
+
+# Tables
+
