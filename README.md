@@ -18,15 +18,13 @@ Audit logs provides traceability through logs for all changes done by various fe
 
 All Azure events Azure are storage in _cloud.azure_ tech. 
 Then, depending on the source of the events, these are saved in custom tables.
-Events that come from Azure Monitor (Azure Activity Log) are store in _cloud.azure.activity_ and Azure Active Directory are store in _cloud.azure.ad_.
+Events that come from Azure Monitor (Azure Activity Log) are store in _cloud.azure.activity.events_ and Azure Active Directory are store in _cloud.azure.ad_.
 
 Tag | Azure Operation Type | Description
 --- | --- | ---
 cloud.azure.ad.audit.\<zone> | AuditLogs | The Azure AD audit logs provide records of system activities for compliance.
 cloud.azure.ad.signin.\<zone> | SignInLogs | The user sign-ins report provides records about activities of AD users.
-cloud.azure.activity.delete.\<zone> | Delete | Represents the operation type
-cloud.azure.activity.events.\<zone> | Action | Represents the operation type
-cloud.azure.activity.write.\<zone> | Write | Represents the operation type
+cloud.azure.activity.events.\<zone> | Activity logs | Azure Activity logs (Action, Write, Delete)
 
 ## Prerequisites
 
@@ -159,9 +157,9 @@ module.exports = async function (context, eventHubMessages) {
     let options = {
         'AuditLogs': `cloud.azure.ad.audit.${zone}`,
         'SignInLogs': `cloud.azure.ad.signin.${zone}`,
-        'Delete': `cloud.azure.activity.delete.${zone}`,
+        'Delete': `cloud.azure.activity.events.${zone}`,
         'Action': `cloud.azure.activity.events.${zone}`,
-        'Write': `cloud.azure.activity.write.${zone}`,
+        'Write': `cloud.azure.activity.events.${zone}`,
         'default': `my.app.azure.losteventhublogs`
     };
     
