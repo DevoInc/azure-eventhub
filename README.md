@@ -13,7 +13,10 @@ Sign-ins logs provides information about the usage of managed applications and u
 
 Audit logs provides traceability through logs for all changes done by various features within Azure AD. Examples of audit logs include changes made to any resources within Azure AD like adding or removing users, apps, groups, roles and policies.
 
+Note that only some roles can create EventHubs in Azure. 
+At the end of this article, there are some links that indicate who can create and access the data. 
 
+ 
 # Tables
 
 All Azure events Azure are storage in _cloud.azure_ tech. 
@@ -25,6 +28,59 @@ Tag | Azure Operation Type | Description
 cloud.azure.ad.audit.\<zone> | AuditLogs | The Azure AD audit logs provide records of system activities for compliance.
 cloud.azure.ad.signin.\<zone> | SignInLogs | The user sign-ins report provides records about activities of AD users.
 cloud.azure.activity.events.\<zone> | Activity logs | Azure Activity logs (Action, Write, Delete)
+
+# Structure folder of EventHubTrigger
+
+In this repository you can find the _EventHubTrigger_ folder. 
+It should be similar to your eventhubtrigger folder in Azure.
+
+In this folder you will find the following files:
+
+- _index.js_: it is the main file that contain the logic to send events from Azure to Devo.
+- _util.js_: contain some utilities to use in the main file. For example, send logs or stats to Devo.
+- _function.json_: Azure configuration file 
+- _package.json_: list of modules to install.
+
+# Logs and stats
+
+If you want to send customs log to Devo according to keep your records, you can follow the next example to do it:
+
+````javascript
+const utils = require('./util');
+
+let default_opt = {
+    host: "eu.elb.relay.logtrust.net",
+    port: 443,
+    ca: fs.readFileSync(__dirname+"/certs/chain.crt"),
+    cert: fs.readFileSync(__dirname+"/certs/mydomain.crt"),
+    key: fs.readFileSync(__dirname+"/certs/mydomain.key")
+};
+
+let dlogs = utils.devoLogs(default_opt);
+
+dlogs.sendLog('My log');
+````  
+
+If you want to send stats of numbers of events and the length of the events follow the next example:
+
+````javascript
+const utils = require('./util');
+
+let default_opt = {
+    host: "eu.elb.relay.logtrust.net",
+    port: 443,
+    ca: fs.readFileSync(__dirname+"/certs/chain.crt"),
+    cert: fs.readFileSync(__dirname+"/certs/mydomain.crt"),
+    key: fs.readFileSync(__dirname+"/certs/mydomain.key")
+};
+
+let dlogs = utils.devoLogs(default_opt);
+let total_events = 9;
+let events_size = 1098;
+
+dlogs.sendStats(total_events, events_size);
+````  
+
 
 ## Prerequisites
 
