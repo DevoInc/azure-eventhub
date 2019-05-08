@@ -44,43 +44,8 @@ In this folder you will find the following files:
 
 # Logs and stats
 
-If you want to send customs log to Devo according to keep your records, you can follow the next example to do it:
-
-````javascript
-const utils = require('./util');
-
-let default_opt = {
-    host: "eu.elb.relay.logtrust.net",
-    port: 443,
-    ca: fs.readFileSync(__dirname+"/certs/chain.crt"),
-    cert: fs.readFileSync(__dirname+"/certs/mydomain.crt"),
-    key: fs.readFileSync(__dirname+"/certs/mydomain.key")
-};
-
-let dlogs = utils.devoLogs(default_opt);
-
-dlogs.sendLog('My log');
-````  
-
-If you want to send stats of numbers of events and the length of the events follow the next example:
-
-````javascript
-const utils = require('./util');
-
-let default_opt = {
-    host: "eu.elb.relay.logtrust.net",
-    port: 443,
-    ca: fs.readFileSync(__dirname+"/certs/chain.crt"),
-    cert: fs.readFileSync(__dirname+"/certs/mydomain.crt"),
-    key: fs.readFileSync(__dirname+"/certs/mydomain.key")
-};
-
-let dlogs = utils.devoLogs(default_opt);
-let total_events = 9;
-let events_size = 1098;
-
-dlogs.sendStats(total_events, events_size);
-````  
+If you want to send customs log to Devo according to keep your records, you can use _sendLog_ and _sendStats_ functions.
+In the _index.js_ file are some examples.
 
 
 ## Prerequisites
