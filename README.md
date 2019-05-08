@@ -37,8 +37,9 @@ It should be similar to your eventhubtrigger folder in Azure.
 In this folder you will find the following files:
 
 - _index.js_: it is the main file that contain the logic to send events from Azure to Devo.
+- _config.json_: contain the initial configuration values.
 - _util.js_: contain some utilities to use in the main file. For example, send logs or stats to Devo.
-- _function.json_: Azure configuration file 
+- _function.json_: Azure configuration file. 
 - _package.json_: list of modules to install.
 
 # Logs and stats
@@ -167,11 +168,29 @@ Now, you need to send the events to Devo.
 First, you must upload the credentials of the Devo domain.
 On your computer, create a folder with the name _certs_, paste the credentials here and then compress this folder in _zip_ format.
 Then, select the _upload_ option on the right side and select the newly created zip file.
-It also uploads the _package.json_ file contained in this tutorial.
+It also uploads the _package.json_, _config.json_ and _util.js_ files contained in this tutorial.
 
 The structure of your event hub function app should look like the following image
 
 ![alt text](resources/step_16.png)
+
+Edit the _config.json_ file according your requirements. 
+The _zone_ attribute correspond to one Azure region. 
+For more detail about region read this [article](https://azure.microsoft.com/en-us/global-infrastructure/geographies/).
+
+For detail about _host_ and _port_ attributes read the [Devo official documentation](https://docs.devo.com/confluence/ndt/sending-data-to-devo/the-devo-in-house-relay/installing-the-devo-relay/install-on-a-virtual-machine)
+
+_send_logs_ and _send_stats_ attributes indicates if you want to send custom logs from the FunctionApp to Devo and send the statistics of the events.
+
+````json
+{
+    "zone": "West Europe",
+    "host": "eu.elb.relay.logtrust.net",
+    "port": 443,
+    "send_logs": false,
+    "send_stats": true
+}
+````
 
 Unzip the _certs.zip_ file from the console. 
 
@@ -193,58 +212,9 @@ npm install
 
 Now, you need to update the _index.js_ file to send the events to Devo from the event hub. 
 
-Copy teh contents of the _index.js_ from this tutorial and paste it into the _index.js_ file of your event hub.
+Copy the contents of the _index.js_ from this tutorial and paste it into the _index.js_ file of your event hub (or remove the older and upload the new _index.js_ file).
 
-````javascript
-const devo = require('@devo/nodejs-sdk');
-const fs = require('fs');
-
-module.exports = async function (context, eventHubMessages) {
-    context.log(`JavaScript eventhub trigger function called for message array ${eventHubMessages}`);
-    let zone = 'eu';
-    let senders = {};
-    let default_opt = {
-        host: "eu.elb.relay.logtrust.net",
-        port: 443,
-        ca: fs.readFileSync(__dirname+"/certs/chain.crt"),
-        cert: fs.readFileSync(__dirname+"/certs/mydomain.crt"),
-        key: fs.readFileSync(__dirname+"/certs/mydomain.key")
-    };
-    let options = {
-        'AuditLogs': `cloud.azure.ad.audit.${zone}`,
-        'SignInLogs': `cloud.azure.ad.signin.${zone}`,
-        'Delete': `cloud.azure.activity.events.${zone}`,
-        'Action': `cloud.azure.activity.events.${zone}`,
-        'Write': `cloud.azure.activity.events.${zone}`,
-        'default': `my.app.azure.losteventhublogs`
-    };
-    
-    for (let opt in options) {
-        let conf = Object.assign({}, default_opt);
-        conf['tag'] = options[opt];
-        senders[opt] = devo.sender(conf);
-    };
-    
-    eventHubMessages.forEach(message => {
-        if (message.constructor !== Object || (message.constructor === Object && !message['records'] )) {
-            senders['default'].send(JSON.stringify(message));
-        } else {
-            for (let m of message.records) {
-                if (options[m.category]){
-                    senders[m.category].send(m);
-                } else {
-                    senders['default'].send(m);
-                }
-                
-            }
-        }
-    });
-    
-    context.done();    
-};
-````
-
-Another important file is the _function.json_. This is a config file generated when you created the function app. 
+Another important file is the _function.json_. This is a config file generated when you created the function app. Do not edit it.
 
 ````json
 {

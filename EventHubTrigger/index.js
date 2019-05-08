@@ -1,19 +1,18 @@
 const devo = require('@devo/nodejs-sdk');
 const fs = require('fs');
 const utils = require('./util');
-
-let sizeof = require('object-sizeof');
+const config = require('./config.json');
+const sizeof = require('object-sizeof');
 
 module.exports = async function (context, eventHubMessages) {
     context.log(`JavaScript eventhub trigger function called for message array ${eventHubMessages}`);
-    let zone = 'eu';
     let events = 0;
     let events_size = 0;
-
+    let zone = utils.formatRegion(config.zone);
     let senders = {};
     let default_opt = {
-        host: "eu.elb.relay.logtrust.net",
-        port: 443,
+        host: config.host,
+        port: config.port,
         ca: fs.readFileSync(__dirname+"/certs/chain.crt"),
         cert: fs.readFileSync(__dirname+"/certs/mydomain.crt"),
         key: fs.readFileSync(__dirname+"/certs/mydomain.key")
@@ -28,9 +27,7 @@ module.exports = async function (context, eventHubMessages) {
     };
     let dlogs = utils.devoLogs(default_opt);
 
-    /**
-     * Initialize the senders
-     */
+    // Initialize the senders
     for (let opt in options) {
         let conf = Object.assign({}, default_opt);
         conf['tag'] = options[opt];

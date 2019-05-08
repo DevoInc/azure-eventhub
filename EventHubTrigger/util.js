@@ -1,6 +1,7 @@
 const devo = require('@devo/nodejs-sdk');
 const dateFormat = require('dateformat');
 const os = require("os");
+const config = require('./config.json');
 
 module.exports = {
     devoLogs: function (devo_sender) {
@@ -23,6 +24,7 @@ module.exports = {
          * Send custom logs to devo.agent.out table
          */
         this.sendLog = function(log) {
+            if (config.send_logs === false) return;
             message = {
                 'time': dateFormat(new Date(), 'isoUtcDateTime'),
                 'agent': 'azure-eventhub-function',
@@ -37,6 +39,7 @@ module.exports = {
          * Send stats to devo.agent.stats table
          */
         this.sendStats = function(events, events_size) {
+            if (config.send_stats === false) return;
             message = {
                 'time': dateFormat(new Date(), 'isoUtcDateTime'),
                 'agent': 'azure-eventhub-function',
@@ -47,5 +50,22 @@ module.exports = {
         }
 
         return this;
+    },
+
+    formatRegion: function(region) {
+        let slugify = function(string) {
+            const a = 'àáäâãåăæçèéëêǵḧìíïîḿńǹñòóöôœøṕŕßśșțùúüûǘẃẍÿź·/_,:;';
+            const b = 'aaaaaaaaceeeeghiiiimnnnooooooprssstuuuuuwxyz------';
+            const p = new RegExp(a.split('').join('|'), 'g');
+            return string.toString().toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(p, c => b.charAt(a.indexOf(c)))
+                .replace(/&/g, '-and-')
+                .replace(/[^\w\-]+/g, '')
+                .replace(/\-\-+/g, '-')
+                .replace(/^-+/, '')
+                .replace(/-+$/, '')
+        };
+        return slugify(region);
     }
 }
