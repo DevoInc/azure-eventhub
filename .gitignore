@@ -1,4 +1,3 @@
-config.json
 *.crt
 *.key
 local_tests/

@@ -1,0 +1,7 @@
+{
+    "zone": "West Europe",
+    "host": "eu.elb.relay.logtrust.net",
+    "port": 443,
+    "send_logs": false,
+    "send_stats": true
+}
