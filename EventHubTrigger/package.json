@@ -1,7 +1,7 @@
 {
-  "name": "eventHubDevo",
+  "name": "devo-azure-eventhub",
   "version": "0.2.0",
-  "description": "EventHub Devo Exmaple",
+  "description": "Sent events from a Azure eventhub to Devo",
   "dependencies": {
     "@devo/js-helper": "^1.3.0",
     "@devo/nodejs-sdk": "^2.3.2",
