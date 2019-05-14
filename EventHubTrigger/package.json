@@ -9,6 +9,10 @@
     "object-sizeof": "^1.3.0"
   },
   "private": true,
-  "author": "Devo",
-  "license": "UNLICENSED"
+  "author": "Devo, Inc.",
+  "license": "MIT License",
+  "bugs": {
+    "url" : "https://github.com/DevoInc/azure-eventhub/issues",
+    "email" : "support@devo.com"
+  }
 }
