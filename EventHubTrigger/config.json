@@ -1,7 +1,11 @@
 {
+    "domain_name":"<your_domain_name>",
     "zone": "West Europe",
     "host": "eu.elb.relay.logtrust.net",
     "port": 443,
     "send_logs": false,
-    "send_stats": true
+    "send_stats": true,
+    "CA_in_KV": false,
+    "Cert_in_KV": false,
+    "Key_in_KV": false
 }

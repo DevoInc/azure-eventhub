@@ -1,11 +1,16 @@
 const devo = require("@devo/nodejs-sdk");
-const fs = require("fs");
 const utils = require("./util");
 const config = require("./config.json");
 const sizeof = require("object-sizeof");
 
 module.exports = async function (context, eventHubMessages) {
-    context.log(`JavaScript eventhub trigger function called for message array ${eventHubMessages}`);
+
+    context.log(`JavaScript eventhub trigger function called`);
+
+    let ca = utils.getCertificate(context, 'CA');
+    let cert = utils.getCertificate(context, 'Cert');
+    let key = utils.getCertificate(context, 'Key');
+
     let events = 0;
     let events_size = 0;
     let zone = utils.formatRegion(config.zone);
@@ -13,9 +18,9 @@ module.exports = async function (context, eventHubMessages) {
     let default_opt = {
         host: config.host,
         port: config.port,
-        ca: fs.readFileSync(__dirname+"/certs/chain.crt"),
-        cert: fs.readFileSync(__dirname+"/certs/mydomain.crt"),
-        key: fs.readFileSync(__dirname+"/certs/mydomain.key")
+        ca: ca,
+        cert: cert,
+        key: key
     };
     let options = {
         "AuditLogs": `cloud.azure.ad.audit.${zone}`,

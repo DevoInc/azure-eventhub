@@ -66,5 +66,39 @@ module.exports = {
                 .replace(/-+$/, "")
         };
         return slugify(region);
+    },
+
+    _getBuffCert: function(cert){
+        cert = cert.replace(/\s/g, '\n');
+        cert = cert.replace(/-----BEGIN\nCERTIFICATE-----/g, '-----BEGIN CERTIFICATE-----\n');
+        cert = cert.replace(/-----END\nCERTIFICATE-----/g, '-----END CERTIFICATE-----\n');
+        cert = cert.replace(/-----BEGIN\nRSA\nPRIVATE\nKEY-----/g, '-----BEGIN RSA PRIVATE KEY-----\n');
+        cert = cert.replace(/-----END\nRSA\nPRIVATE\nKEY-----/g, '-----END RSA PRIVATE KEY-----\n');
+        return Buffer.from(cert, 'utf8');
+    },
+
+    getCertificate: function(context, cert_type) {
+        if (!['CA', 'Key', 'Cert'].includes(cert_type))
+            throw `${cert_type} not valid. Must be one of: [CA, Cert, Key]`;
+
+        if (`${cert_type}_in_KV` in config && config[`${cert_type}_in_KV`]) {
+            context.log(`checking ${cert_type} in Key Vault`);
+            let env_name = `domain${cert_type}`;
+            if (env_name in process.env ){
+                return this._getBuffCert(process.env[env_name]);
+            }
+            throw `${env_name} is not defined in the enviroment process. It must be declared.`;
+        } else {
+            context.log(`checking ${cert_type} in File`);
+            let file_name = (cert_type === 'CA') ? 'chain' : config.domain_name;
+            let file_ext = (cert_type === 'Key') ? 'key' : 'crt';
+            let file_path = __dirname+`/certs/${file_name}.${file_ext}`;
+            context.log(`reading file ${file_path}`);
+            try {
+                return fs.readFileSync(file_path);
+            } catch(err) {
+                throw `Can't open file ${file_name}.${file_ext}. ${err}`;
+            }
+        }
     }
 }
