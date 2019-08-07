@@ -160,6 +160,14 @@ _CA_in_KV_, _Cert_in_KV_ and _Key_in_KV_ attributes indicate if the certificate 
 }
 ````
 
+Install the devo js SDK and all dependencies. Inside the Azure Console run the following command: 
+
+```bash
+npm install
+```
+
+This will generate a new folder (_node_modules_) with the packages.
+
 After that, you must upload the credentials of your Devo domain according to the configuration file.
 You have two options: Upload the credentials to Azure Function App or upload the credentials to Azure Key Vault.
 
@@ -183,21 +191,16 @@ Delete the _zip_ file.
 > rm certs.zip
 ````
 
-Install the devo js SDK and all dependencies. This will generate a new folder (_node_modules_) with the packages.
 
-```bash
-npm install
-```
-
-## Upload the credentials to Azure Key
+## Upload the credentials to Azure Key Vault
 
 Go to Function App resource and click on _Platform features_ and then in _Identity_.
 
-[alt text](resources/step_17_0.png)
+![alt text](resources/step_17_0.png)
 
 Activate it and click on _Save_ button.
 
-[alt text](resources/step_17_01.png)
+![alt text](resources/step_17_01.png)
 
 Now, click on Create a resource option in left-hand menu, then search Key Vault option. Then click on _Create_
 
