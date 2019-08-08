@@ -240,7 +240,7 @@ Go to _Configuration_ option in your Function App
 ![alt text](resources/step_17_9.png)
 
 Add a new application setting for each secret.
-The name of the application setting must be one of those: _domainCA_, _domainCert_ and _domainCert_ and the value must be like
+The name of the application setting must be one of those: _domainCA_, _domainCert_ and _domainKey_ and the value must be like
 
 ```
 @Microsoft.KeyVault(SecretUri=<kv_secret_identifier>)
