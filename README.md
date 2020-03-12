@@ -133,8 +133,6 @@ Now, you need to send the events to Devo.
 
 First, you need to update _index.js_ file and upload the _package.json_, _config.json_ and _util.js_ files contained in this tutorial.
 
-Edit the _config.json_ file according your requirements.
-
 The _domain_name_ attribute is the name of your domain in Devo.
 
 The _zone_ attribute correspond to one Azure region.

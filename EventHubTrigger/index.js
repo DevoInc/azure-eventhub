@@ -28,6 +28,14 @@ module.exports = async function (context, eventHubMessages) {
         "Delete": `cloud.azure.activity.events.${zone}`,
         "Action": `cloud.azure.activity.events.${zone}`,
         "Write": `cloud.azure.activity.events.${zone}`,
+        "Administrative": `cloud.azure.activity.events.${zone}`,
+        "ServiceHealth": `cloud.azure.activity.events.${zone}`,
+        "ResourceHealth": `cloud.azure.activity.events.${zone}`,
+        "Alert": `cloud.azure.activity.events.${zone}`,
+        "Autoscale": `cloud.azure.activity.events.${zone}`,
+        "Security": `cloud.azure.activity.events.${zone}`,
+        "Recommendation": `cloud.azure.activity.events.${zone}`,
+        "Policy": `cloud.azure.activity.events.${zone}`,
         "default": `my.app.azure.losteventhublogs`
     };
     let dlogs = utils.devoLogs(default_opt);
@@ -39,7 +47,15 @@ module.exports = async function (context, eventHubMessages) {
         senders[opt] = devo.sender(conf);
     };
 
-    eventHubMessages.forEach(message => {
+    eventHubMessages.forEach(msg => {
+
+        let message = {};
+        try {
+            message = JSON.parse(msg);
+        } catch {
+            context.error('JSON parser error. msg is not an object');
+        }
+
         if (message.constructor !== Object || (message.constructor === Object && !message["records"] )) {
             // Unknown records
             senders["default"].send(JSON.stringify(message));

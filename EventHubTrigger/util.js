@@ -1,6 +1,7 @@
 const devo = require("@devo/nodejs-sdk");
 const dateFormat = require("dateformat");
 const config = require("./config.json");
+const fs = require('fs');
 
 module.exports = {
     devoLogs: function (devoSender) {
