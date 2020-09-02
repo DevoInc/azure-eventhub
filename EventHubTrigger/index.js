@@ -53,7 +53,7 @@ module.exports = async function (context, eventHubMessages) {
         try {
             message = JSON.parse(msg);
         } catch {
-            context.error('JSON parser error. msg is not an object');
+            context.log.error('JSON parser error. msg is not an object');
         }
 
         if (message.constructor !== Object || (message.constructor === Object && !message["records"] )) {

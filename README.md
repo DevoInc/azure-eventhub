@@ -158,7 +158,7 @@ _CA_in_KV_, _Cert_in_KV_ and _Key_in_KV_ attributes indicate if the certificate 
 }
 ````
 
-Install the devo js SDK and all dependencies. Inside the Azure Console run the following command: 
+Install the devo js SDK and all dependencies. Inside the Azure Console run the following command:
 
 ```bash
 npm install
@@ -246,11 +246,76 @@ The name of the application setting must be one of those: _domainCA_, _domainCer
 
 ![alt text](resources/step_17_10.png)
 
+# Enabling Azure function to access Event Hub stream
+
+> :warning: **This step is usually performed by portal when integration with Event Hub for Azure Function is created**: Just here for reference, troubleshooting or manual set up
+
+## Event Hub side
+
+A shared access signature (SAS) provides you with a way to grant limited access to resources in your Event Hubs namespace. SAS guards access to Event Hubs resources based on authorization rules. These rules are configured either on a namespace, or an entity (event hub or topic).
+
+You can review SAS rules at _All services_ -> _Event Hubs_. Then select the Event Hubs namespace you want to give access to:
+
+![alt text](resources/step_25.png)
+
+Inside the Overview screen click on the _Shared access policies_ option in the left side menu:
+
+![alt text](resources/step_26.png)
+
+Then you can add a new policy or edit an existent policy:
+
+![alt text](resources/step_27.png)
+
+_RootManageSharedAccessKey_ is the default Shared access policy created by default for the namespace, but it has priviledges for all actions (Manage, Send, Listen). We encourage to create a new one with only **Send** priviledges.
+
+![alt text](resources/step_28.png)
+
+After creating the policy, click on it again to see its details. Copy _Connection string-primary key_ from the right side panel. It would be needed as the value for the applicaction property in the Azure Function.
+
+![alt text](resources/step_29.png)
+
+## Azure Function
+
+In order to integrate Event Hub stream in the Azure Function as inbound binding we must configure it at `function.json`:
+
+![alt text](resources/step_30.png)
+
+```javascript
+{
+  "bindings": [
+    {
+      "name": "eventHubMessages",
+      "connection": "DevoPSTestingNamespace_RootManageSharedAccessKey_EVENTHUB",
+      "eventHubName": "insights-operational-logs",
+      "consumerGroup": "$Default",
+      "cardinality": "many",
+      "dataType": "string",
+      "direction": "in",
+      "type": "eventHubTrigger"
+    }
+  ]
+}
+```
+
+The `connection` parameter contains as value the key of the application settings pair that contains the value we copied from the last step in former section (_Connection string-primary key_). Therefore, inside Function's _Application settings_ there is an entry whose key is `DevoPSTestingNamespace_RootManageSharedAccessKey_EVENTHUB` that contains the _Connection string-primary key_ to authorize the access to the Event Hub by means of the _Shared access policy_ we have just created.
+
+You can check Function's _Application settings_ at _All services_ -> _App_Services_. Then select the _App Service_ that contains the Azure Function listening for Event Hub events:
+
+![alt text](resources/step_31.png)
+
+Inside the Overview screen click on the _Configuration_ option under _Settings_ section in the left side menu:
+
+![alt text](resources/step_32.png)
+
+You will find _Applications settings_ tab containing all the key-value settings for the application. There must be a setting whose key is `DevoPSTestingNamespace_RootManageSharedAccessKey_EVENTHUB` or whatever name was used in `function.json`. The vale, hidden by default but it can be disclosed by clicking on it, must contain the _Connection string-primary key_ value we copied from the _Shared access policy_ of the Event Hub namespace.
+
+![alt text](resources/step_33.png)
+
 # Sending events from Azure Active Directory
 
 Before to start to retrieve _Audit Logs_ and _Sign-ins_ events from _Azure Active Directory_ you will need to have the permissions necessaries and In order to export Sign-in data, your organization needs Azure AD P1 or P2 license.
 
-Click on the _Audit logs_ or _Sign-ins_ option in the left side menu and then click in _Export Data Settings_.
+Go to _All services_ -> _Azure Active Directory_. Click on the _Audit logs_ or _Sign-ins_ option in the left side menu and then click in _Export Data Settings_.
 
 ![alt text](resources/step_18.png)
 
@@ -263,6 +328,28 @@ Fill in and select the corresponding values according to requirements and save y
 ![alt text](resources/step_20.png)
 
 Now you should start to retrieve events from Azure Active Directory.
+
+# Sending events from Azure Activity Logs
+
+Before to start to retrieve _Activity Logs_ you will need to have the permissions necessaries.
+
+Go to _All services_ -> _Activity log_.
+
+![alt text](resources/step_21.png)
+
+Click on the _Diagnostic settings_ option on the top menu.
+
+![alt text](resources/step_22.png)
+
+And then edit a existent setting _Edit setting_ or create a new one _+ Add disgnostic setting_.
+
+![alt text](resources/step_23.png)
+
+Select the category details to be sent. Select the _Stream to an event hub_ option. Fill in and select the corresponding values according to your Event Hub settings and save your configuration.
+
+![alt text](resources/step_24.png)
+
+Now you should start to retrieve events from _Activity logs_.
 
 # Links
 
