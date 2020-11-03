@@ -1,4 +1,52 @@
-# Creating a Event Hub to send events from Azure to Devo
+CONTENTS
+========
+
+1- [Creating a Event Hub to send events from Azure to Devo](#sect-1)
+
+2- [Tables](#sect-2)
+
+3- [Structure folder of EventHubTrigger](#sect-3)
+
+4- [Logs and stats](#sect-4)
+
+&emsp; 4.1- [Prerequisites](#sect-4.1)
+
+5- [Create a EventHub](#sect-5)
+
+&emsp; 5.1- [Creating the namespace](#sect-5.1)
+
+&emsp; 5.2- [Creating the Event Hubs](#sect-5.2)
+
+6- [Creating the Function App](#sect-6)
+
+&emsp; 6.1- [Uploading files to the trigger function](#sect-6.1)
+
+&emsp; 6.2- [Modifications in files](#sect-6.2)
+
+&emsp; 6.3- [Instalation](#sect-6.3)
+
+&emsp; 6.4- [Credentials](#sect-6.4)
+
+&emsp; &emsp; 6.4.1-  [Upload the credentials to Azure Function App](#sect-6.4.1)
+
+&emsp; &emsp; 6.4.2- [Upload the credentials to Azure Key Vault](#sect-6.4.2)
+
+7- [Enabling Azure function to access Event Hub stream](#sect-7)
+
+&emsp; 7.1- [Event Hub side](#sect-7.1)
+
+&emsp; 7.2- [Azure Function](#sect-7.2)
+
+8- [Sending events from Azure Active Directory](#sect-8)
+
+9- [Sending events from Azure Activity Logs](#sect-9)
+
+10- [Links](#sect-10)
+
+<br>
+<br>
+
+# <a name="sect-1"></a> Creating a Event Hub to send events from Azure to Devo
 
 This is not an agent, but it is a general guide on how to sent events from Azure.
 
@@ -16,8 +64,9 @@ Audit logs provides traceability through logs for all changes done by various fe
 Note that only some roles can create EventHubs in Azure.
 At the end of this article, there are some links that indicate who can create and access the data.
 
+<br>
 
-# Tables
+# <a name="sect-2"></a> Tables
 
 All Azure events Azure are storage in _cloud.azure_ tech.
 Then, depending on the source of the events, these are saved in custom tables.
@@ -29,7 +78,9 @@ cloud.azure.ad.audit.\<zone> | AuditLogs | The Azure AD audit logs provide recor
 cloud.azure.ad.signin.\<zone> | SignInLogs | The user sign-ins report provides records about activities of AD users.
 cloud.azure.activity.events.\<zone> | Activity logs | Azure Activity logs (Action, Write, Delete)
 
-# Structure folder of EventHubTrigger
+<br>
+
+# <a name="sect-3"></a> Structure folder of EventHubTrigger
 
 In this repository you can find the _EventHubTrigger_ folder.
 It should be similar to your eventhubtrigger folder in Azure.
@@ -42,22 +93,29 @@ In this folder you will find the following files:
 - _function.json_: Azure configuration file.
 - _package.json_: list of modules to install.
 
-# Logs and stats
+<br>
+
+# <a name="sect-4"></a> Logs and stats
 
 If you want to send customs log to Devo according to keep your records, you can use _sendLog_ and _sendStats_ functions.
 In the _index.js_ file are some examples.
 
+<br>
 
-## Prerequisites
+## <a name="sect-4.1"></a> Prerequisites
 
 - Have a Azure account with the permissions
 - Have a Devo account
 
-# Create a EventHub
+<br>
+
+# <a name="sect-5"></a> Create a EventHub
 
 Go to your Azure portal account and follow the steps below.
 
-### Creating the namespace
+<br>
+
+## <a name="sect-5.1"></a> Creating the namespace
 
 Click _Create a resource_ on the left side, find and select the _Event Hubs_ resource and click on the _Create_ button.
 
@@ -72,7 +130,9 @@ Once the namespace is created, you can access it by clicking on _All resources_ 
 
 ![alt text](resources/step_3.png)
 
-## Creating the Event Hubs
+<br>
+
+## <a name="sect-5.2"></a> Creating the Event Hubs
 
 Click on the _Monitor_ option in the left side menu, then on _Activity Log_ and then on the _Export to Event Hub_ option.
 
@@ -87,8 +147,9 @@ This may take several minutes. Once the event hub is created you can see it in t
 
 ![alt text](resources/step_6.png)
 
+<br>
 
-# Creating the Function App
+# <a name="sect-6"></a> Creating the Function App
 
 Click on _Create a resource_ option in left-hand menu, then search and select the _Function App_ option.
 Then click on _Create_.
@@ -131,19 +192,68 @@ And, on the left side, you can see the structure of the function app.
 
 Now, you need to send the events to Devo.
 
-First, you need to update _index.js_ file and upload the _package.json_, _config.json_ and _util.js_ files contained in this tutorial.
+First, you need to update:
+-  _index.js_ file 
 
-The _domain_name_ attribute is the name of your domain in Devo.
+and upload the 
+- _package.json_ 
+- _config.json_ 
+- _util.js_ 
 
-The _zone_ attribute correspond to one Azure region.
+files contained in this tutorial, inside the folder "EventHubTrigger".
+
+Note: "**function.json**" is also included in the folder, but it is automatically generated with the trigger definition. 
+
+<br>
+
+## <a name="sect-6.1"></a> Uploading files to the trigger function
+
+There are several ways to do this:
+ - Using Deployment Center (multiple alternatives: git, OneDrive, FTP, etc.)
+ - Using App Service Editor
+
+In this guide we are going to explain how to work with the last one.
+
+![alt text](resources/app_service_editor.png)
+
+By default we will see something like this: 
+
+![alt text](resources/app_service_editor_02.png)
+
+In this case, the function has a one trigger with two files, function.json and index.js.
+
+The usage is simple, by right clicking in the "EXPLORE" menu, you can either create, upload, rename or delete files or folders. You can also directly modify any text in each file. 
+
+![alt text](resources/app_service_editor_03.png)
+
+For this configuration we are going to do the following changes: 
+
+- Upload "**config.json**", "**package.json**" and "**utils.js**" from the EventHubTrigger folder mentioned in this documentation, by right clicking under the menu with the name of our trigger, in the white space, as you can see in the previous screenshot.
+- Now we must include each uploaded file in the trigger folder. Select each element by holding the left mouse button and move the element inside the folder with the trigger name.
+- You can either remove the **index.js** and upload the new definition or just copy the content of index.js in this documentation and replace the content autogenerated in the trigger function (see previous screenshot).
+
+You can see the result in the following screenshot: 
+
+![alt text](resources/app_service_editor_04.png)
+
+<br>
+
+## <a name="sect-6.2"></a> Modifications in files 
+
+File **config.json**: 
+
+- The _domain_name_ attribute is the name of your domain in Devo.
+
+- The _zone_ attribute correspond to one Azure region.
 For more detail about region read this [article](https://azure.microsoft.com/en-us/global-infrastructure/geographies/).
 
-For detail about _host_ and _port_ attributes read the [Devo official documentation](https://docs.devo.com/confluence/ndt/sending-data-to-devo/the-devo-in-house-relay/installing-the-devo-relay/install-on-a-virtual-machine)
+- For detail about _host_ and _port_ attributes read the [Devo official documentation](https://docs.devo.com/confluence/ndt/sending-data-to-devo/the-devo-in-house-relay/installing-the-devo-relay/install-on-a-virtual-machine)
 
-_send_logs_ and _send_stats_ attributes indicate if you want to send custom logs from the FunctionApp to Devo and send the statistics of the events.
+- _send_logs_ and _send_stats_ attributes indicate if you want to send custom logs from the FunctionApp to Devo and send the statistics of the events.
 
-_CA_in_KV_, _Cert_in_KV_ and _Key_in_KV_ attributes indicate if the certificate file is stored in Key Vault (true) or in the Function App (false).
+- _CA_in_KV_, _Cert_in_KV_ and _Key_in_KV_ attributes indicate if the certificate file is stored in Key Vault (true) or in the Function App (false).
 
+This is a possible definition example: 
 ````json
 {
     "domain_name": "my_domain",
@@ -157,25 +267,43 @@ _CA_in_KV_, _Cert_in_KV_ and _Key_in_KV_ attributes indicate if the certificate 
     "Key_in_KV": true
 }
 ````
+<br>
 
-Install the devo js SDK and all dependencies. Inside the Azure Console run the following command:
+## <a name="sect-6.3"></a> Instalation 
+
+Return to the function screen and under the "Development Tools" menu select "Console".
+
+Locate the trigger folder and install the devo js SDK and all dependencies with the following command:
 
 ```bash
 npm install
 ```
+![alt text](resources/step_15_01.png)
+
 
 This will generate a new folder (_node_modules_) with the packages.
 
+
+<br>
+
+## <a name="sect-6.4"></a> Credentials 
+
 After that, you must upload the credentials of your Devo domain according to the configuration file.
-You have two options: Upload the credentials to Azure Function App or upload the credentials to Azure Key Vault.
+You have **two options**: 
+- Upload the credentials to Azure Function App (local usage)
+- Upload the credentials to Azure Key Vault
 
-## Upload the credentials to Azure Function App
+<br>
+
+### <a name="sect-6.4.1"></a> Upload the credentials to Azure Function App
+
+For more information about the credentials, please visit the Devo documentation: 
+https://docs.devo.com/confluence/ndt/domain-administration/security-credentials
+
+You can do it like the stepts defined in the title "Uploading files to the trigger function" or do the following if you need to upload a ZIP file.
+
 On your computer, create a folder with the name _certs_, paste the credentials here and then compress this folder in _zip_ format. Keep in mind that you should not change the credentials files names.
-Then, select the _upload_ option on the right side and select the newly created zip file.
-
-The structure of your event hub function app should look like the following image
-
-![alt text](resources/step_16.png)
+Then, select the _upload_ option and select the newly created zip file.
 
 Unzip the _certs.zip_ file from the console.
 
@@ -189,8 +317,13 @@ Delete the _zip_ file.
 > rm certs.zip
 ````
 
+The structure of your event hub function app should look like the following image
 
-## Upload the credentials to Azure Key Vault
+![alt text](resources/step_16.png)
+
+<br>
+
+### <a name="sect-6.4.2"></a> Upload the credentials to Azure Key Vault
 
 Go to Function App resource and click on _Platform features_ and then in _Identity_.
 
@@ -246,11 +379,15 @@ The name of the application setting must be one of those: _domainCA_, _domainCer
 
 ![alt text](resources/step_17_10.png)
 
-# Enabling Azure function to access Event Hub stream
+<br>
+
+# <a name="sect-7"></a> Enabling Azure function to access Event Hub stream
 
 > :warning: **This step is usually performed by portal when integration with Event Hub for Azure Function is created**: Just here for reference, troubleshooting or manual set up
 
-## Event Hub side
+<br>
+
+## <a name="sect-7.1"></a> Event Hub side
 
 A shared access signature (SAS) provides you with a way to grant limited access to resources in your Event Hubs namespace. SAS guards access to Event Hubs resources based on authorization rules. These rules are configured either on a namespace, or an entity (event hub or topic).
 
@@ -274,7 +411,9 @@ After creating the policy, click on it again to see its details. Copy _Connectio
 
 ![alt text](resources/step_29.png)
 
-## Azure Function
+<br>
+
+## <a name="sect-7.2"></a> Azure Function
 
 In order to integrate Event Hub stream in the Azure Function as inbound binding we must configure it at `function.json`:
 
@@ -311,7 +450,9 @@ You will find _Applications settings_ tab containing all the key-value settings 
 
 ![alt text](resources/step_33.png)
 
-# Sending events from Azure Active Directory
+<br>
+
+# <a name="sect-8"></a> Sending events from Azure Active Directory
 
 Before to start to retrieve _Audit Logs_ and _Sign-ins_ events from _Azure Active Directory_ you will need to have the permissions necessaries and In order to export Sign-in data, your organization needs Azure AD P1 or P2 license.
 
@@ -329,7 +470,9 @@ Fill in and select the corresponding values according to requirements and save y
 
 Now you should start to retrieve events from Azure Active Directory.
 
-# Sending events from Azure Activity Logs
+<br>
+
+# <a name="sect-9"></a> Sending events from Azure Activity Logs
 
 Before to start to retrieve _Activity Logs_ you will need to have the permissions necessaries.
 
@@ -351,7 +494,9 @@ Select the category details to be sent. Select the _Stream to an event hub_ opti
 
 Now you should start to retrieve events from _Activity logs_.
 
-# Links
+<br>
+
+# <a name="sect-10"></a> Links
 
 See how to set up the export of Azure logs to event hub
 
